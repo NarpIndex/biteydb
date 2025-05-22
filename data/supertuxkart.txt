@@ -1,4 +1,5 @@
 ✅ Bitey Certified
 🍫 Official Bitey Port
-🕹️ Fully Desktop-Integrated
+🖥️ Desktop Ready
+🌍 Multiplayer Support
 🎮 Gamepad Compatible (tested)
