@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+# Path to the biteydb data directory
+BITEYDB_DATA_DIR = "/usr/bitey/software/biteydb/data"
+
+# Get the package name from the command-line argument
+package = ARGV[0]
+
+if package.nil? || package.strip.empty?
+  puts "❌ Please provide a package name."
+  exit 1
+end
+
+info_file = File.join(BITEYDB_DATA_DIR, "#{package}.txt")
+
+if File.exist?(info_file)
+  puts File.read(info_file)
+else
+  puts "ℹ️ No additional info found for '#{package}'."
+end
