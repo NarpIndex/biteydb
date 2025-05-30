@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
+require 'open-uri'
 
-# Path to the biteydb data directory
-BITEYDB_DATA_DIR = "/usr/bitey/software/biteydb/data"
+# Remote base URL for biteydb-data
+BITEYDB_REMOTE_BASE = "https://raw.githubusercontent.com/NarpIndex/biteydb-data/main/data"
 
 # Get the package name from the command-line argument
 package = ARGV[0]
@@ -11,10 +12,13 @@ if package.nil? || package.strip.empty?
   exit 1
 end
 
-info_file = File.join(BITEYDB_DATA_DIR, "#{package}.txt")
+info_url = "#{BITEYDB_REMOTE_BASE}/#{package}.txt"
 
-if File.exist?(info_file)
-  puts File.read(info_file)
-else
+begin
+  info = URI.open(info_url, &:read)
+  puts info
+rescue OpenURI::HTTPError => e
   puts "ℹ️ No additional info found for '#{package}'."
+rescue => e
+  puts "❌ Error fetching package data: #{e.message}"
 end
