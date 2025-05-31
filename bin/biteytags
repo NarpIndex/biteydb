@@ -65,6 +65,17 @@ puts "---"
 puts "🎉 All components from tag '#{tag}' installed to #{SOFTWARE_DIR}"
 end
 
+def remove(tag)
+  tag_data = fetch_tag(tag)
+  puts "---"
+  tag_data.each do |name, _|
+    puts "🗑️ Removing #{name}..."
+    run_cmd("sudo bitey remove --noconfirm #{name}")
+  end
+  puts "---"
+  puts "🧹 All components from tag '#{tag}' have been removed."
+end
+
 # ---- Argument handling ----
 if ARGV.length == 0
   puts "Usage:"
