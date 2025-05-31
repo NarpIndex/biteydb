@@ -68,16 +68,16 @@ end
 # ---- Argument handling ----
 if ARGV.length == 0
   puts "Usage:"
-  puts "  sudo biteytags get <tag>"
+  puts "  sudo biteytags install <tag>"
   exit 1
 end
 
-if ARGV[0] == 'get' && ARGV.length >= 2
+if ARGV[0] == 'install' && ARGV.length >= 2
   tag = ARGV[1]
   install(tag)
 else
   puts "❌ Invalid syntax."
   puts "Usage:"
-  puts "  sudo biteytags get <tag>"
+  puts "  sudo biteytags install <tag>"
   exit 1
 end
