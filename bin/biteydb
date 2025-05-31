@@ -3,7 +3,7 @@ require 'open-uri'
 
 def usage
   puts "Usage:"
-  puts "  bitey-tool.rb info <package>"
+  puts "  biteydb info <package>"
   exit 1
 end
 
