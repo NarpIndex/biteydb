@@ -45,22 +45,7 @@ def fetch_tag(tag)
   end
 end
 
-# ---- Argument handling ----
-if ARGV.length == 0
-  puts "Usage:"
-  puts "  sudo biteytags get <tag>"
-  exit 1
-end
-
-if ARGV[0] == 'get' && ARGV.length >= 2
-  tag = ARGV[1]
-else
-  puts "❌ Invalid syntax."
-  puts "Usage:"
-  puts "  sudo biteytags get <tag>"
-  exit 1
-end
-
+def install(tag)
 # ---- Tag install logic ----
 tag_data = fetch_tag(tag)
 
@@ -78,3 +63,21 @@ tag_data.each do |name, url|
 end
 puts "---"
 puts "🎉 All components from tag '#{tag}' installed to #{SOFTWARE_DIR}"
+end
+
+# ---- Argument handling ----
+if ARGV.length == 0
+  puts "Usage:"
+  puts "  sudo biteytags get <tag>"
+  exit 1
+end
+
+if ARGV[0] == 'get' && ARGV.length >= 2
+  tag = ARGV[1]
+  install(tag)
+else
+  puts "❌ Invalid syntax."
+  puts "Usage:"
+  puts "  sudo biteytags get <tag>"
+  exit 1
+end
