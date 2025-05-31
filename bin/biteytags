@@ -6,6 +6,9 @@ require 'time'
 
 BITEY_DIR = '/usr/bitey'
 SOFTWARE_DIR = File.join(BITEY_DIR, 'software')
+PROJECT_DIR = File.join(BITEY_DIR, 'project')
+PATHS_FILE = File.join(PROJECT_DIR, 'bitey_paths')
+RC_FILE = File.join(PROJECT_DIR, 'biteyrc')
 TAG_DB_BASE = 'https://raw.githubusercontent.com/NarpIndex/biteydb-data/main/tags'
 
 # Create software directory if needed
@@ -70,6 +73,8 @@ tag_data.each do |name, url|
   end
 
   git_with_progress(url, dest_dir, name)
+  File.open(PATHS_FILE, 'a') { |f| f.puts install_path }
+  File.open(RC_FILE, 'a') { |f| f.puts File.join(install_path, 'bin') }
 end
 puts "---"
 puts "🎉 All components from tag '#{tag}' installed to #{SOFTWARE_DIR}"
