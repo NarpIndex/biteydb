@@ -58,6 +58,10 @@ tag_data.each do |name, url|
   end
 
   git_with_progress(url, dest_dir, name)
+  install_script = File.join(dest_dir, 'project', 'install.sh')
+  if File.exist?(install_script)
+    system("bash", install_script)
+  end
   File.open(PATHS_FILE, 'a') { |f| f.puts dest_dir }
   File.open(RC_FILE, 'a') { |f| f.puts File.join(dest_dir, 'bin') }
 end
