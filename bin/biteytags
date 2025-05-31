@@ -86,9 +86,13 @@ end
 if ARGV[0] == 'install' && ARGV.length >= 2
   tag = ARGV[1]
   install(tag)
+elif ARGV[0] == 'remove' && ARGV.length >= 2
+  tag = ARGV[1]
+  remove(tag)
 else
   puts "❌ Invalid syntax."
   puts "Usage:"
   puts "  sudo biteytags install <tag>"
+  puts "  sudo biteytags remove <tag>"
   exit 1
 end
