@@ -80,6 +80,7 @@ end
 if ARGV.length == 0
   puts "Usage:"
   puts "  sudo biteytags install <tag>"
+  puts "  sudo biteytags remove <tag>"
   exit 1
 end
 
