@@ -36,15 +36,29 @@ def fetch_tag(tag)
   rescue OpenURI::HTTPError => e
     puts "❌ Failed to fetch tag data: #{e.message}"
     exit 1
+  rescue JSON::ParserError => e
+    puts "❌ Failed to parse JSON for tag '#{tag}': #{e.message}"
+    exit 1
   end
 end
 
-if ARGV.length < 1
-  puts "Usage: sudo biteytags get <tag>"
+# ---- Argument handling ----
+if ARGV.length == 0
+  puts "Usage:"
+  puts "  sudo biteytags get <tag>"
   exit 1
 end
 
-tag = ARGV[0]
+if ARGV[0] == 'get' && ARGV.length >= 2
+  tag = ARGV[1]
+else
+  puts "❌ Invalid syntax."
+  puts "Usage:"
+  puts "  sudo biteytags get <tag>"
+  exit 1
+end
+
+# ---- Tag install logic ----
 tag_data = fetch_tag(tag)
 
 puts "---"
