@@ -1,24 +1,74 @@
 #!/usr/bin/env ruby
 require 'open-uri'
 
-# Remote base URL for biteydb-data
-BITEYDB_REMOTE_BASE = "https://raw.githubusercontent.com/NarpIndex/biteydb-data/main/data"
-
-# Get the package name from the command-line argument
-package = ARGV[0]
-
-if package.nil? || package.strip.empty?
-  puts "❌ Please provide a package name."
+def usage
+  puts "Usage:"
+  puts "  bitey-tool.rb info <package>"
   exit 1
 end
 
-info_url = "#{BITEYDB_REMOTE_BASE}/#{package}.txt"
+def fetch_remote_conf(url)
+  begin
+    raw_conf = URI.open(url, &:read)
+  rescue => e
+    puts "❌ Failed to fetch pak.conf: #{e.message}"
+    exit 1
+  end
 
-begin
-  info = URI.open(info_url, &:read)
-  puts info
-rescue OpenURI::HTTPError => e
-  puts "ℹ️ No additional info found for '#{package}'."
-rescue => e
-  puts "❌ Error fetching package data: #{e.message}"
+  conf = {}
+  raw_conf.each_line do |line|
+    next unless line.include?('=')
+    key, value = line.strip.split('=', 2)
+    conf[key] = value.gsub(/^['"]|['"]$/, '') # remove surrounding quotes
+  end
+
+  conf
+end
+
+def info(package)
+  if package.nil? || package.strip.empty?
+    puts "❌ Please provide a package name."
+    exit 1
+  end
+
+  link_url = "https://raw.githubusercontent.com/NarpIndex/biteydb-data/main/link/#{package}.txt"
+  begin
+    pakconf_url = URI.open(link_url, &:read).strip
+  rescue => e
+    puts "ℹ️ No information found."
+    exit 1
+  end
+
+  conf = fetch_remote_conf(pakconf_url)
+
+  puts
+  puts "📦 Package Info: #{package}"
+  puts "Name: #{conf['PACKAGE_NAME'] || package}"
+  puts "Version: #{conf['PACKAGE_VERSION'] || 'Unknown'}"
+  puts "Maintainer: #{conf['PACKAGE_MAINTAINER'] || 'Unknown'}"
+  puts "Description: #{conf['PACKAGE_DESCRIPTION'] || 'No description'}"
+  puts "Source: #{pakconf_url}"
+
+  # Optionally display extra info from data/{package}.txt
+  begin
+    info_url = "https://raw.githubusercontent.com/NarpIndex/biteydb-data/main/data/#{package}.txt"
+    extra_info = URI.open(info_url, &:read)
+    puts
+    puts extra_info
+  rescue OpenURI::HTTPError
+    # silently ignore missing optional info
+  rescue => e
+    puts "❌ Error fetching package data: #{e.message}"
+  end
+end
+
+# === MAIN ===
+
+command = ARGV.shift
+case command
+when "info"
+  package = ARGV.shift
+  info(package)
+else
+  usage
 end
