@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+require 'json'
+require 'open-uri'
+require 'fileutils'
+require 'time'
+
+BITEY_DIR = '/usr/bitey'
+SOFTWARE_DIR = File.join(BITEY_DIR, 'software')
+TAG_DB_BASE = 'https://raw.githubusercontent.com/NarpIndex/biteydb-data/main/tags'
+
+# Create software directory if needed
+FileUtils.mkdir_p(SOFTWARE_DIR) unless Dir.exist?(SOFTWARE_DIR)
+
+def run_cmd(command)
+  success = system(command)
+  code = $?.exitstatus
+
+  unless success
+    puts "\n❌ Command failed: #{command} (exit code: #{code})"
+    exit code
+  end
+end
+
+def git_with_progress(url, dest, name)
+  puts "⬇️  Cloning #{name} from #{url}..."
+  run_cmd("git clone --quiet #{url} #{dest}")
+  puts "✅ Installed #{name}"
+end
+
+def fetch_tag(tag)
+  tag_url = "#{TAG_DB_BASE}/#{tag}.json"
+  begin
+    puts "🌐 Fetching tag data for '#{tag}'..."
+    json = URI.open(tag_url).read
+    JSON.parse(json)
+  rescue OpenURI::HTTPError => e
+    puts "❌ Failed to fetch tag data: #{e.message}"
+    exit 1
+  end
+end
+
+if ARGV.length < 1
+  puts "Usage: sudo biteytags get <tag>"
+  exit 1
+end
+
+tag = ARGV[0]
+tag_data = fetch_tag(tag)
+
+puts "---"
+tag_data.each do |name, url|
+  dest_dir = File.join(SOFTWARE_DIR, name)
+  if Dir.exist?(dest_dir)
+    puts "🔁 #{name} already exists. Skipping..."
+    next
+  end
+
+  git_with_progress(url, dest_dir, name)
+end
+puts "---"
+puts "🎉 All components from tag '#{tag}' installed to #{SOFTWARE_DIR}"
