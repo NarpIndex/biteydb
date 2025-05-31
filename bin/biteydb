@@ -41,7 +41,6 @@ def info(package)
 
   conf = fetch_remote_conf(pakconf_url)
 
-  puts
   puts "📦 Package Info: #{package}"
   puts "Name: #{conf['PACKAGE_NAME'] || package}"
   puts "Version: #{conf['PACKAGE_VERSION'] || 'Unknown'}"
